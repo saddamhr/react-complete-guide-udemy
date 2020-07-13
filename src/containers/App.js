@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import classes from './App.css';
 import Persons from '../components/Persons/Persons'
 import Cockpit from '../components/Cockpit/Cockpit'
+import withClass from '../hoc/withClass'
+import Aux from '../hoc/Auxiliary';
 
 class App extends Component {
   constructor(props) {
@@ -17,7 +19,8 @@ class App extends Component {
       { id: 'gfchv1', name: 'Stephanie', age: 26 }
     ],
     otherState: 'some other value',
-    showPersons: false
+    showPersons: false,
+    showCockpit: true
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -25,9 +28,27 @@ class App extends Component {
     return state;
   }
 
-  componentDidMount = (event) => {
+  // componentWillMount() {
+  //   console.log('[App.js] componentWillMount')
+  // }
+
+  componentDidMount() {
     console.log('[App.js] componentDidMount')
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('[App.js] shouldComponentUpdate');
+    // if (nextProps.persons !== this.props.persons) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+    return true
+  }
+  componentDidUpdate() {
+    console.log('[App.js] componentDidUpdate');
+  }
+
   nameChangedHandler = (event, id) => {
     const personIndex = this.state.persons.findIndex(p => {
       return p.id === id;
@@ -74,16 +95,17 @@ class App extends Component {
     }
 
     return (
-      <div className={classes.App}>
-        <Cockpit
+      <Aux>
+        <button onClick={() => { this.setState({ showCockpit: false }) }}>Remove Cockpit</button>
+        {this.state.showCockpit ? (<Cockpit
           title={this.props.appTitle}
           showPersons={this.state.showPersons}
-          persons={this.state.persons}
-          clicked={this.togglePersonHandler} />
+          personsLength={this.state.persons.length}
+          clicked={this.togglePersonHandler} />) : null}
         {persons}
-      </div>
+        </Aux>
     )
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
